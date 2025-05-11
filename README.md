@@ -71,7 +71,7 @@ secret_sender/
 1. **Clona il repository**  
    ```bash
    git clone https://github.com/nicontinisio/secret-sender.git
-   cd secret_sender_v1
+   cd secret-sender
    ```
 2. **Configura l’ambiente**  
    Se desideri, crea un `.env` nella root:
