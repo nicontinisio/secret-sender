@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card mx-auto" style="max-width:700px;">
+  <div class="card-header bg-success text-white text-center">Visualizza Secret</div>
+  <div class="card-body">
+    {% if error %}
+      <div class="alert alert-danger">{{ error }}</div>
+    {% elif not revealed %}
+      <p>Il contenuto è protetto e accessibile una sola volta tramite il link fornito.</p>
+      <form method="post">
+        <input type="hidden" name="blob" value='{{ blob|e }}'>
+        {% if needs_pw %}
+          <div class="mb-3">
+            <label>Password</label>
+            <input type="password" name="password" class="form-control" required>
+          </div>
+        {% endif %}
+        <button class="btn btn-primary w-100">Mostra Secret</button>
+      </form>
+    {% else %}
+      <div class="mb-3">
+        <label>Messaggio</label>
+        <textarea class="form-control bg-light text-black" rows="4" readonly>{{ message }}</textarea>
+      </div>
+      <div class="mb-3">
+        <a href="data:text/plain;charset=utf-8,{{ message|urlencode }}" download="messaggio.txt" class="btn btn-outline-success w-100 w-100">Scarica Messaggio</a>
+      </div>
+      {% if file %}
+        <div class="mb-3">
+          <label>Allegato:</label><br>
+          <a download="{{ file.name }}" href="data:application/octet-stream;base64,{{ file.data }}" class="btn btn-secondary">Scarica {{ file.name }}</a>
+        </div>
+      {% endif %}
+    {% endif %}
+  </div>
+  <div class="card-footer text-center">
+    <a href="/about" class="mx-2">About</a> |
+    <a href="https://github.com/nicontinisio/secret-sender" target="_blank" class="mx-2">GitHub</a> |
+    <a href="/">Crea nuovo Secret</a>
+  </div>
+</div>
+{% endblock %}

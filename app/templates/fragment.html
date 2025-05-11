@@ -1,0 +1,17 @@
+<div id="result" class="alert alert-success mx-auto p-3" style="max-width:700px;">
+  <strong>Secret creato!</strong>
+  <div class="my-2">
+    <input type="text" id="secretUrl" class="form-control" readonly>
+  </div>
+  <div class="d-flex gap-2">
+    <button class="btn btn-success flex-fill" onclick="navigator.clipboard.writeText(secretUrl.value)">Copia Secret</button>
+    <a id="secretLink" class="btn btn-warning flex-fill" target="_blank">Apri Secret</a>
+  </div>
+</div>
+<script>
+(function(){
+  const u = location.origin + '/secrets/{{ token }}';
+  document.getElementById('secretUrl').value = u;
+  document.getElementById('secretLink').href = u;
+})();
+</script>

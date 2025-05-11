@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card mx-auto shadow-lg" style="max-width:700px;">
+  <div class="card-header bg-primary text-white text-center">
+    About Secret Sender
+  </div>
+  <div class="card-body">
+    <h5>Cos'è Secret Sender?</h5>
+    <p>
+      Secret Sender è un'applicazione web progettata per condividere messaggi e file sensibili in modo <strong>sicuro</strong> e <strong>temporaneo</strong>. Ogni secret viene cifrato lato server e può essere visualizzato <em>una sola volta</em> dal destinatario.
+    </p>
+    <h5>Architettura Tecnica</h5>
+    <ul>
+      <li>🔗 <strong>FastAPI</strong> - framework Python performante per API asincrone.</li>
+      <li>🔒 <strong>Redis</strong> - database in-memory per storage temporaneo, protetto da password e gestito con Docker Compose.</li>
+      <li>📄 <strong>HTMX</strong> - per aggiornamenti AJAX senza boilerplate frontend JS.</li>
+    </ul>
+    <h5>Dettagli di Sicurezza</h5>
+    <ul>
+      <li>🔐 <strong>AES-GCM</strong> per cifratura dei payload, garantendo integrità e autenticazione.</li>
+      <li>🔑 <strong>Scrypt KDF</strong> per derivazione della chiave da password utente (configurabile).</li>
+      <li>⏰ <strong>TTL configurabile</strong> (1h, 24h, 1d, 30d, o senza scadenza) per autodistruzione del secret in Redis.</li>
+      <li>👤 <strong>One-Time View</strong> - dopo la prima lettura il secret viene eliminato dal database.</li>
+    </ul>
+    <h5>Workflow Utente</h5>
+    <ol>
+      <li>Inserisci un messaggio o carica un file.</li>
+      <li>Opzionale: imposta una password e seleziona un TTL.</li>
+      <li>Clicca “Crea Secret” per ottenere un link unico.</li>
+      <li>Il destinatario accede al link, inserisce la password se richiesta, e visualizza/salva il contenuto.</li>
+    </ol>
+    <h5>Perché Scegliere Secret Sender?</h5>
+    <p>
+      Secret Sender combina semplicità d'uso con robuste misure di sicurezza, ideale per:
+      <ul>
+        <li>Condivisione di credenziali temporanee</li>
+        <li>Invio di documenti sensibili</li>
+        <li>Comunicazioni private one-time</li>
+      </ul>
+    </p>
+    <p class="text-center mt-4">
+      <a href="https://github.com/nicontinisio/secret-sender" target="_blank" class="btn btn-light me-2">Visita il Repository GitHub</a>
+      <a href="/" class="btn btn-light">Crea un nuovo Secret</a>
+    </p>
+  </div>
+  <div class="card-footer bg-light">
+    <h6 class="text-secondary">Dettagli Tecnici</h6>
+    <ul>
+      <li>Server Python con FastAPI, configurato per ASGI e uvicorn con hot-reload in sviluppo.</li>
+      <li>Redis in-memory come data store volatile, con autenticazione via password e ACL per l’utente <code>default</code>.</li>
+      <li>Cifratura AES-GCM: nonce da 96 bit e tag di autenticazione integrato, garantendo confidenzialità e autenticità.</li>
+      <li>KDF Scrypt configurato con N=2^14, r=8, p=1 per resistenza a brute-force di password.</li>
+      <li>Tempi di scadenza gestiti via TTL di Redis (<code>SETEX</code>) oppure key persistente senza scadenza.</li>
+      <li>Interazione frontend-lightweight tramite HTMX per frammenti HTML e pagine dinamiche senza SPA.</li>
+      <li>Gestione file multipart con limite di dimensione imposto in Python e validazione client-side minimal.</li>
+    </ul>
+  </div>
+</div>
+{% endblock %}

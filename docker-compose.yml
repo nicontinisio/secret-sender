@@ -1,0 +1,44 @@
+services:
+  web:
+    image: secret-sender:latest
+    container_name: secret-sender-web
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: secretpass!
+      MAX_UPLOAD_MB: 10
+    depends_on:
+      - redis
+    networks:
+     secret-sender-backend:
+      ipv4_address: 172.24.0.2
+     proxynet:
+      ipv4_address: 172.18.0.8
+    labels:
+      - "traefik.docker.network=proxynet"
+      - "providers.docker.network=proxynet"
+      #Routers continisio.it
+      - "traefik.http.routers.ss.entrypoints=web"
+      - "traefik.http.routers.ss.rule= Host(`secret.continisio.it`)"
+      #Routers Secure continio.it
+      - "traefik.http.routers.ss-secure.rule= Host(`secret.continisio.it`)"
+      - "traefik.http.routers.ss-secure.entrypoints=websecure"
+      - "traefik.http.routers.ss-secure.tls.certresolver=dns01"
+      #Services
+      - "traefik.http.services.kb-secure.loadbalancer.server.port=8000"
+      # Redirect Scheme HTTP -> HTTPS
+      - "traefik.http.middlewares.ss-redirect.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.ss-redirect.redirectscheme.permanent=true"
+  redis:
+    image: redis:7-alpine
+    container_name: secret-sender-db
+    networks:
+      secret-sender-backend:
+        ipv4_address: 172.23.0.3
+    restart: unless-stopped
+    environment:
+      REDIS_PASSWORD: secretpass!
+    command: >
+      sh -c "redis-server --requirepass 'secretpass!' --appendonly yes"
+    ports:
+      - "6379:6379"

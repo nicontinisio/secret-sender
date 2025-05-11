@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card mx-auto" style="max-width:700px;">
+  <div class="card-header bg-primary text-white">Crea un nuovo Secret</div>
+  <div class="card-body">
+    <form enctype="multipart/form-data" hx-post="/secrets" hx-target="#result" hx-swap="innerHTML">
+      <div class="mb-3">
+        <label>Messaggio</label>
+        <textarea name="message" class="form-control" rows="3" required></textarea>
+      </div>
+      <div class="mb-3">
+        <label>Allegato (opzionale - Max {{ MAX_UPLOAD_MB }} MB)</label>
+        <div class="input-group">
+          <input type="file" name="file" id="fileInput" class="form-control" data-max-bytes="{{ MAX_UPLOAD_BYTES }}" data-max-mb="{{ MAX_UPLOAD_MB }}">
+          <button type="button" class="btn btn-outline-danger" onclick="fileInput.value=''">✕</button>
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label>Scadenza</label>
+          <select name="ttl_choice" class="form-select">
+            <option value="">Nessuna scadenza</option>
+            <option value="1h">1 Ora</option>
+            <option value="24h">24 Ore</option>
+            <option value="1d">1 Giorno</option>
+            <option value="30d">30 Giorni</option>
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label>Password (opzionale)</label>
+          <input type="password" name="password" class="form-control">
+        </div>
+      </div>
+      <button class="btn btn-primary w-100">Crea Secret</button>
+    </form>
+    <div id="result" class="mt-4"></div>
+  </div>
+  <div class="card-footer text-center">
+    <a href="/about" class="mx-2">About</a> |
+    <a href="https://github.com/nicontinisio/secret-sender" target="_blank" class="mx-2">GitHub</a>
+  </div>
+</div>
+
+<script>
+// file size check
+const fileInput = document.getElementById('fileInput');
+if(fileInput) {
+  fileInput.addEventListener('change', function(){
+    const max = parseInt(this.dataset.maxBytes);
+    const mb = this.dataset.maxMb;
+    const f = this.files[0];
+    if(f && f.size>max){
+      alert('File troppo grande (max '+mb+' MB)'); this.value='';
+    }
+  });
+}
+</script>
+{% endblock %}
